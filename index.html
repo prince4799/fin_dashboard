@@ -1490,7 +1490,7 @@ function renderChart(labels, prices, symbol, isPositive) {
           displayColors: false,
           callbacks: {
             label: function(context) {
-              return '$' + (context.parsed.y || 0).toFixed(2);
+              return  (context.parsed.y || 0).toFixed(2);
             }
           }
         }
@@ -1505,7 +1505,7 @@ function renderChart(labels, prices, symbol, isPositive) {
           ticks: {
             color: colors.textMuted,
             font: { size: 10 },
-            callback: function(v) { return '$' + v.toFixed(0); }
+            callback: function(v) { return  v.toFixed(0); }
           },
           grid: { color: colors.gridColor },
           border: { display: false }
@@ -1621,11 +1621,11 @@ async function getStock() {
       '</div>' +
       '<div class="stat-line">' +
         '<span class="stat-key">Start Price</span>' +
-        '<span class="stat-val">$' + startPriceStr + '</span>' +
+        '<span class="stat-val">' + startPriceStr + '</span>' +
       '</div>' +
       '<div class="stat-line">' +
         '<span class="stat-key">End Price</span>' +
-        '<span class="stat-val">$' + endPriceStr + '</span>' +
+        '<span class="stat-val">' + endPriceStr + '</span>' +
       '</div>' +
       '<div class="stat-line">' +
         '<span class="stat-key">Change</span>' +
@@ -1642,7 +1642,7 @@ async function getStock() {
     var volStr = vol.toFixed(2);
     var ddStr = (dd * 100).toFixed(2);
 
-    document.getElementById("kpiPrice").innerText = "$" + endPriceStr;
+    document.getElementById("kpiPrice").innerText =  endPriceStr;
 
     var kpiChange = document.getElementById("kpiChange");
     kpiChange.innerText = signStr + percentStr + "%";
@@ -1750,10 +1750,10 @@ async function getStock() {
           '<div class="calc-header-name">' + companyName + '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="calc-item"><div class="calc-dot"></div><div>Start Price: <strong style="color:var(--text-primary);">$' + startPriceStr + '</strong></div></div>' +
-      '<div class="calc-item"><div class="calc-dot"></div><div>End Price: <strong style="color:var(--text-primary);">$' + endPriceStr + '</strong></div></div>' +
-      '<div class="calc-item"><div class="calc-dot"></div><div>Difference: <strong style="color:' + diffColor + ';">' + signStr + '$' + Math.abs(diff).toFixed(2) + '</strong></div></div>' +
-      '<div class="calc-item"><div class="calc-dot"></div><div>% Change: ($' + Math.abs(diff).toFixed(2) + ' / $' + startPriceStr + ') &times; 100 = <strong style="color:' + diffColor + ';">' + signStr + percentStr + '%</strong></div></div>' +
+      '<div class="calc-item"><div class="calc-dot"></div><div>Start Price: <strong style="color:var(--text-primary);">' + startPriceStr + '</strong></div></div>' +
+      '<div class="calc-item"><div class="calc-dot"></div><div>End Price: <strong style="color:var(--text-primary);">' + endPriceStr + '</strong></div></div>' +
+      '<div class="calc-item"><div class="calc-dot"></div><div>Difference: <strong style="color:' + diffColor + ';">' + signStr +  Math.abs(diff).toFixed(2) + '</strong></div></div>' +
+      '<div class="calc-item"><div class="calc-dot"></div><div>% Change: (' + Math.abs(diff).toFixed(2) + ' / ' + startPriceStr + ') &times; 100 = <strong style="color:' + diffColor + ';">' + signStr + percentStr + '%</strong></div></div>' +
       '<div class="calc-item"><div class="calc-dot"></div><div>Volatility (&sigma;): <strong style="color:var(--text-primary);">' + vol.toFixed(4) + '</strong></div></div>' +
       '<div class="calc-item"><div class="calc-dot"></div><div>Max Drawdown: <strong style="color:var(--danger);">' + ddStr + '%</strong></div></div>';
 
