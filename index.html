@@ -1264,7 +1264,7 @@ async function fetchSuggestions(query) {
     return;
   }
 
-  var url = "https://corsproxy.io/?https://query1.finance.yahoo.com/v1/finance/search?q=" + query;
+  var url = "https://query1.finance.yahoo.com/v1/finance/search?q=" + query;
 
   try {
     var res = await fetch(url);
@@ -1492,7 +1492,7 @@ async function getStock() {
   var userFrom = formatDate(from);
   var userTo = formatDate(to);
 
-  var url = "https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/" + symbol + "?period1=" + userFrom + "&period2=" + userTo + "&interval=1d";
+  var url = "https://query1.finance.yahoo.com/v8/finance/chart/" + symbol + "?period1=" + userFrom + "&period2=" + userTo + "&interval=1d";
 
   try {
     var res = await fetch(url);
