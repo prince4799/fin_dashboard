@@ -1506,7 +1506,7 @@ async function getStock() {
   try {
     // var res = await fetch(url);
     // var data = await res.json();
-    var data= await yahooFetch(`v8/finance/chart/${symbol}?period1=${userFrom}&period2=${userTo}&interval=1d`)
+    var data= await yahooFetch(`/v8/finance/chart/${symbol}?period1=${userFrom}&period2=${userTo}&interval=1d`)
 
     var result = data.chart.result[0];
     var prices = result.indicators.quote[0].close;
