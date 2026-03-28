@@ -46,9 +46,6 @@
       --swatch-2: #3b82f6;
     }
 
-    /* =============================================
-       THEME: DAYLIGHT (clean white)
-    ============================================= */
     [data-theme="daylight"] {
       --bg-base: #f5f7fa;
       --bg-surface: #ffffff;
@@ -82,9 +79,6 @@
       --swatch-2: #2563eb;
     }
 
-    /* =============================================
-       THEME: SLATE (neutral gray)
-    ============================================= */
     [data-theme="slate"] {
       --bg-base: #18181b;
       --bg-surface: #1f1f23;
@@ -118,9 +112,6 @@
       --swatch-2: #a1a1aa;
     }
 
-    /* =============================================
-       THEME: FOREST (dark green)
-    ============================================= */
     [data-theme="forest"] {
       --bg-base: #071209;
       --bg-surface: #0c1a0f;
@@ -154,9 +145,6 @@
       --swatch-2: #22c55e;
     }
 
-    /* =============================================
-       THEME: SEPIA (warm brown/cream)
-    ============================================= */
     [data-theme="sepia"] {
       --bg-base: #f5f0e8;
       --bg-surface: #faf6ee;
@@ -190,9 +178,6 @@
       --swatch-2: #b45309;
     }
 
-    /* =============================================
-       THEME: OCEAN (deep blue/teal)
-    ============================================= */
     [data-theme="ocean"] {
       --bg-base: #041422;
       --bg-surface: #06192d;
@@ -226,9 +211,6 @@
       --swatch-2: #06b6d4;
     }
 
-    /* =============================================
-       THEME: AMOLED (pure black)
-    ============================================= */
     [data-theme="amoled"] {
       --bg-base: #000000;
       --bg-surface: #050505;
@@ -262,9 +244,6 @@
       --swatch-2: #818cf8;
     }
 
-    /* =============================================
-       THEME: SUNSET (warm dark with orange)
-    ============================================= */
     [data-theme="sunset"] {
       --bg-base: #1a0e0a;
       --bg-surface: #231511;
@@ -303,11 +282,17 @@
     ============================================= */
     * { margin:0; padding:0; box-sizing:border-box; }
 
+    html {
+      overflow-x: hidden;
+    }
+
     body {
       font-family:'Inter',sans-serif;
       background:var(--bg-base);
       color:var(--text-primary);
       min-height:100vh;
+      overflow-x: hidden;
+      max-width: 100vw;
       transition: background .4s ease, color .3s ease;
       background-image:
         radial-gradient(ellipse 80% 60% at 10% 0%, var(--gradient-a), transparent),
@@ -338,13 +323,14 @@
       border:1px solid var(--border-subtle);
       border-radius:16px;
       transition: background .35s, border-color .35s, box-shadow .35s;
+      min-width: 0; /* CRITICAL: prevents flex/grid children from overflowing */
     }
     .card:hover {
       border-color:var(--border-default);
       box-shadow:0 4px 32px var(--shadow);
     }
     .card-inner { padding:20px; }
-    @media(max-width:640px) { .card-inner { padding:16px; } .card { border-radius:14px; } }
+    @media(max-width:640px) { .card-inner { padding:14px; } .card { border-radius:14px; } }
 
     /* Field */
     .field {
@@ -358,6 +344,7 @@
       transition: border-color .2s, box-shadow .2s, background .35s;
       outline:none;
       width:100%;
+      min-width: 0; /* prevent overflow */
     }
     .field:focus {
       border-color:var(--accent);
@@ -440,7 +427,7 @@
       color:var(--text-primary);
       transition: color .35s;
     }
-    @media(max-width:640px) { .kpi-value { font-size:1.35rem; } }
+    @media(max-width:640px) { .kpi-value { font-size:1.2rem; } }
 
     /* Risk bar */
     .risk-track {
@@ -481,15 +468,21 @@
 
     /* Grid */
     .dash { display:flex; flex-direction:column; gap:20px; }
-    .row { display:grid; gap:20px; }
+    .row { display:grid; gap:20px; min-width: 0; }
     .row-4 { grid-template-columns:repeat(4,1fr); }
     .row-3-1 { grid-template-columns:2fr 1fr; }
-    @media(max-width:900px) { .row-4 { grid-template-columns:repeat(2,1fr); } .row-3-1 { grid-template-columns:1fr; } }
+    @media(max-width:900px) {
+      .row-4 { grid-template-columns:repeat(2,1fr); }
+      .row-3-1 { grid-template-columns:1fr; }
+    }
+    @media(max-width:480px) {
+      .row-4 { grid-template-columns:1fr; }
+    }
 
-    /* Sidebar */
+    /* Sidebar - Desktop: left vertical bar */
     .sidebar {
       position:fixed; left:0; top:0; bottom:0;
-      width:68px;
+      width: 68px;
       background:var(--bg-surface);
       border-right:1px solid var(--border-subtle);
       display:flex; flex-direction:column;
@@ -535,13 +528,22 @@
       margin-bottom:22px; flex-shrink:0;
       transition: background .35s;
     }
-    .main-area { margin-left:68px; transition: margin .3s; }
+    .main-area {
+      margin-left:68px;
+      transition: margin .3s;
+      min-width: 0;
+      overflow-x: hidden;
+    }
 
+    .nav-label { display:none; font-size:.6rem; color:var(--text-muted); margin-top:2px; }
+
+    /* Sidebar - Mobile: bottom horizontal bar */
     @media(max-width:768px) {
       .sidebar {
         position:fixed;
         left:0; right:0; bottom:0; top:auto;
-        width:100%; height:62px;
+        width: 100% !important;
+        height:62px;
         flex-direction:row;
         justify-content:space-around;
         padding:0;
@@ -549,9 +551,18 @@
         border-top:1px solid var(--border-subtle);
       }
       .sidebar .logo { display:none; }
-      .sidebar .nav-ico { width:38px; height:38px; border-radius:12px; }
+      .sidebar .nav-ico {
+        flex-direction:column;
+        width:auto; height:auto;
+        padding:6px 10px; gap:2px;
+        border-radius:12px;
+      }
       .sidebar .nav-ico .tooltip { display:none !important; }
-      .main-area { margin-left:0; margin-bottom:70px; }
+      .nav-label { display:block; }
+      .main-area {
+        margin-left:0 !important;
+        margin-bottom:70px;
+      }
     }
 
     /* Stats */
@@ -569,6 +580,7 @@
     .calc-item {
       display:flex; gap:8px; padding:6px 0;
       font-size:.8rem; color:var(--text-secondary);
+      word-break: break-word;
     }
     .calc-dot {
       width:6px; height:6px;
@@ -615,16 +627,6 @@
       content:''; width:3px; height:14px;
       border-radius:2px; background:var(--accent);
       transition: background .35s;
-    }
-
-    .nav-label { display:none; font-size:.6rem; color:var(--text-muted); margin-top:2px; }
-    @media(max-width:768px) {
-      .sidebar .nav-ico {
-        flex-direction:column;
-        width:auto; height:auto;
-        padding:6px 10px; gap:2px;
-      }
-      .nav-label { display:block; }
     }
 
     /* =============================================
@@ -762,7 +764,6 @@
       margin-top:2px;
     }
 
-    /* Preview mini bar inside theme card */
     .theme-preview {
       height:4px;
       border-radius:2px;
@@ -784,18 +785,98 @@
       font-size:.7rem;
       color:var(--text-faint);
     }
-    @media(max-width:640px) { .btn { flex:1; } }
-    @media(max-width:640px) { .cal-icon { display:none !important; } }
-    @media(max-width:640px) { .to-text { display:none; } }
 
-    /* input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-} */
+    /* =============================================
+       MOBILE-SPECIFIC OVERRIDES
+    ============================================= */
+    @media(max-width:640px) {
+      .btn { flex:1; }
+      .cal-icon { display:none !important; }
+      .to-text { display:none; }
+    }
+
+    /* Chart container fix */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+    @media(min-width:641px) {
+      .chart-container { height: 320px; }
+    }
+    @media(max-width:640px) {
+      .chart-container { height: 220px; }
+    }
+
+    /* Date bar responsive */
+    .date-bar-inner {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:12px;
+    }
+    .date-field-wrap {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:1;
+      min-width:0; /* KEY: allows shrinking below content size */
+    }
+    @media(max-width:480px) {
+      .date-bar-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .date-field-wrap {
+        width: 100%;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* Header responsive */
+    .header-wrap {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      position:relative;
+      z-index:1000;
+    }
+    .search-wrap {
+      width:320px;
+      max-width:100%;
+      min-width:0;
+    }
+    @media(max-width:480px) {
+      .header-wrap {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-wrap {
+        width: 100%;
+      }
+    }
+
+    /* Main area padding responsive */
+    .dash-padding {
+      padding: 24px 20px;
+    }
+    @media(max-width:480px) {
+      .dash-padding {
+        padding: 16px 12px;
+      }
+    }
+
+    /* Table overflow */
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      min-width: 0;
+    }
 
   </style>
 </head>
@@ -815,7 +896,6 @@
   </div>
 
   <div class="theme-panel-body">
-
     <p class="theme-section-label">Dark Themes</p>
     <div class="theme-grid" id="darkThemes"></div>
 
@@ -824,7 +904,6 @@
 
     <p class="theme-section-label">Special Themes</p>
     <div class="theme-grid" id="specialThemes"></div>
-
   </div>
 
   <div class="theme-panel-footer">
@@ -832,7 +911,7 @@
   </div>
 </div>
 
-<!-- SIDEBAR -->
+<!-- SIDEBAR — removed conflicting Tailwind width classes -->
 <nav class="sidebar" id="sidebarNav">
   <div class="logo" onclick="reload()">
     <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -867,16 +946,16 @@
 <div class="main-area" style="position:relative;">
   <div class="glow-top"></div>
 
-  <div style="max-width:1200px; margin:auto; padding:24px 20px;" class="dash">
+  <div class="dash dash-padding">
 
     <!-- HEADER -->
-    <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; position:relative; z-index:1000;" class="anim">
+    <div class="header-wrap anim">
       <div>
         <h1 style="font-size:1.5rem; font-weight:700; color:var(--text-primary);">Stock Analytics</h1>
         <p style="font-size:.82rem; color:var(--text-muted); margin-top:2px;">Compare &bull; Analyze &bull; Decide</p>
       </div>
 
-      <div class="sug-wrap" style="width:320px; max-width:100%;">
+      <div class="sug-wrap search-wrap">
         <div style="position:relative;">
           <svg style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted);" width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <input type="text" id="symbol" placeholder="Search stock symbol..." oninput="handleSearch()" class="field" style="padding-left:38px;" />
@@ -887,15 +966,15 @@
 
     <!-- DATE BAR -->
     <div class="card anim" style="animation-delay:.05s; position:relative; z-index:1;">
-      <div class="card-inner" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:200px;">
+      <div class="card-inner date-bar-inner">
+        <div class="date-field-wrap">
           <div class="cal-icon" style="width:32px; height:32px; border-radius:10px; background:var(--purple-dim); color:var(--purple); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </div>
           <input type="date" id="fromDate" class="field" style="flex:1;" />
         </div>
         <span class="to-text" style="color:var(--text-muted); font-size:.8rem;"><b>TO</b></span>
-        <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:200px;">
+        <div class="date-field-wrap">
           <input type="date" id="toDate" class="field" style="flex:1;" />
         </div>
         <button onclick="getStock()" class="btn">
@@ -912,7 +991,7 @@
           <div class="ico" style="background:var(--accent-glow); color:var(--accent);">
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div>
+          <div style="min-width:0;">
             <p class="kpi-label">Price</p>
             <p class="kpi-value" id="kpiPrice">--</p>
           </div>
@@ -924,7 +1003,7 @@
           <div class="ico" id="kpiChangeIcon" style="background:var(--success-dim); color:var(--success);">
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div>
+          <div style="min-width:0;">
             <p class="kpi-label">% Change</p>
             <p class="kpi-value" id="kpiChange">--</p>
           </div>
@@ -937,7 +1016,7 @@
             <div class="ico" id="riskIcon" style="background:var(--warning-dim); color:var(--warning);">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <div style="flex:1;">
+            <div style="flex:1; min-width:0;">
               <p class="kpi-label">Risk Level</p>
               <div id="riskBar" class="risk-track">
                 <div class="risk-fill" style="width:0%;"></div>
@@ -953,7 +1032,7 @@
           <div class="ico" style="background:var(--cyan-dim); color:var(--cyan);">
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M2 12h4l3-9 4 18 3-9h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div>
+          <div style="min-width:0;">
             <p class="kpi-label">Volatility</p>
             <p class="kpi-value" id="volatility">--</p>
           </div>
@@ -966,8 +1045,8 @@
       <div class="card">
         <div class="card-inner">
           <p class="sec-head">Price Trend</p>
-          <div style="height:320px; position:relative;">
-            <canvas id="chart" style="width:100%; height:100%;"></canvas>
+          <div class="chart-container">
+            <canvas id="chart"></canvas>
           </div>
         </div>
       </div>
@@ -995,7 +1074,7 @@
     <div id="section-compare" class="card anim" style="animation-delay:.25s;">
       <div class="card-inner">
         <p class="sec-head">Comparison Table</p>
-        <div style="overflow-x:auto;">
+        <div class="table-scroll">
           <table class="tbl">
             <thead>
               <tr>
@@ -1177,7 +1256,6 @@ function applyTheme(themeId) {
     localStorage.setItem('stock-dashboard-theme', themeId);
   } catch(e) {}
 
-  // Update active states in panel
   var cards = document.querySelectorAll('.theme-card');
   for (var i = 0; i < cards.length; i++) {
     var card = cards[i];
@@ -1188,7 +1266,6 @@ function applyTheme(themeId) {
     }
   }
 
-  // Re-render chart if exists with new theme colors
   if (chartInstance && lastChartData) {
     renderChart(lastChartData.labels, lastChartData.prices, lastChartData.symbol, lastChartData.isPositive);
   }
@@ -1205,7 +1282,6 @@ function closeThemePanel() {
   document.getElementById('themeOverlay').classList.remove('open');
 }
 
-// Load saved theme on startup
 (function() {
   try {
     var saved = localStorage.getItem('stock-dashboard-theme');
@@ -1247,7 +1323,7 @@ var debounceTimer;
 var stockStore = [];
 var lastChartData = null;
 
-  function yahooFetch(path) {
+function yahooFetch(path) {
   return fetch(`/api/yahoo?path=${encodeURIComponent(path)}`)
     .then(res => {
       if (!res.ok) throw new Error("API failed");
@@ -1272,11 +1348,7 @@ async function fetchSuggestions(query) {
     return;
   }
 
-  // var url = "https://corsproxy.io/?https://query1.finance.yahoo.com/v1/finance/search?q=" + query;
-
   try {
-    // var res = await fetch(url);
-    // var data = await res.json();
     const data = await yahooFetch(`/v1/finance/search?q=${query}`)
     var results = data.quotes || [];
 
@@ -1316,7 +1388,7 @@ document.addEventListener('click', function(e) {
   var input = document.getElementById("symbol");
   if (!input.contains(e.target) && !box.contains(e.target)) {
     box.style.display = "none";
-  }
+    }
 });
 
 function formatDate(date) {
@@ -1429,14 +1501,14 @@ function renderChart(labels, prices, symbol, isPositive) {
       },
       scales: {
         x: {
-          ticks: { color: colors.textMuted, maxTicksLimit: 8, font: { size: 11 } },
+          ticks: { color: colors.textMuted, maxTicksLimit: 6, font: { size: 10 } },
           grid: { color: colors.gridColor },
           border: { display: false }
         },
         y: {
           ticks: {
             color: colors.textMuted,
-            font: { size: 11 },
+            font: { size: 10 },
             callback: function(v) { return '$' + v.toFixed(0); }
           },
           grid: { color: colors.gridColor },
@@ -1448,15 +1520,12 @@ function renderChart(labels, prices, symbol, isPositive) {
 }
 
 function hexToRgba(color, alpha) {
-  // Handle named colors & rgb/rgba
   if (color.indexOf('rgba') === 0 || color.indexOf('rgb') === 0) {
-    // just inject alpha
     if (color.indexOf('rgba') === 0) {
       return color.replace(/[\d.]+\)$/, alpha + ')');
     }
     return color.replace('rgb', 'rgba').replace(')', ', ' + alpha + ')');
   }
-  // Handle hex
   if (color.indexOf('#') === 0) {
     var hex = color.replace('#', '');
     if (hex.length === 3) {
@@ -1501,12 +1570,8 @@ async function getStock() {
   var userFrom = formatDate(from);
   var userTo = formatDate(to);
 
-  // var url = "https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/" + symbol + "?period1=" + userFrom + "&period2=" + userTo + "&interval=1d";
-
   try {
-    // var res = await fetch(url);
-    // var data = await res.json();
-    var data= await yahooFetch(`/v8/finance/chart/${symbol}?period1=${userFrom}&period2=${userTo}&interval=1d`)
+    var data = await yahooFetch(`/v8/finance/chart/${symbol}?period1=${userFrom}&period2=${userTo}&interval=1d`)
 
     var result = data.chart.result[0];
     var prices = result.indicators.quote[0].close;
@@ -1610,7 +1675,6 @@ async function getStock() {
       labels.push(new Date(timestamps[t] * 1000).toLocaleDateString('en-US', { month:'short', day:'numeric' }));
     }
 
-    // Store chart data for theme re-render
     lastChartData = {
       labels: labels,
       prices: prices,
